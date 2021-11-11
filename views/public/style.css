@@ -1,0 +1,77 @@
+body{
+    background-color: antiquewhite;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin: auto;
+    text-align: center;
+}
+
+.login-forms, .contenedor{
+    width: 300px;
+    margin: 0% auto;
+}
+
+.login-forms h1{
+    text-align: center;
+    color: brown;
+    font-size: 28px;
+    padding: 70px 0 10px 0;
+}
+.login-forms input[type="password"], 
+.login-forms input[type="text"]{
+    width: 100px;
+    padding: 15px;
+    border: 1px solid  #ced4ce;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+/* boton de login */
+.btn-login{
+    width: 100px;
+    padding: 15px;
+    background-color: cadetblue;
+    border: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    color: #fff;
+   
+}
+
+.btn-login:hover, .btn-login:active{
+    color: #fff;
+    background-color: #61428F;
+    border-color: #61428F;
+}
+.btn-login:focus{
+    box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.25);
+}
+
+/* boton de registrar */
+.btn-register{
+    width: 100px;
+    padding: 15px;
+    background-color: rgb(55, 46, 179);
+    border: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: large;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 20px;
+    /* apariencia */
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+    text-decoration: none;
+}
+
+.btn-register:hover, .btn-register:active{
+    color: #fff;
+    background-color: #61428F;
+    border-color: #61428F;
+}
+.btn-register:focus{
+    box-shadow: 0 0 0 3px rgba(121, 82, 179, 0.25);
+}

@@ -1,0 +1,104 @@
+/*margen*/
+*{
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+}
+/*body-letra*/
+body{
+    font-family: 'Roboto', sans-serif;
+}
+
+
+/*body-letra*/
+h1, h2, h3, h4, h5, h6{
+    color: #1d273b;
+    font-weight: 300;
+}
+
+.contenedor{
+    width: 90%;
+    max-width: 1000px;
+    margin: auto;
+    overflow: hidden;
+}
+
+/*espacio del padding*/
+.contenedor1{
+    width: 90%;
+    max-width: 1000px;
+    margin: auto;
+    overflow: hidden;
+    padding: 60px 0;
+}
+
+h1{
+    font-size: 50px;
+}
+
+/*Header*/
+
+header::before{
+    content: "";
+    display: block;
+    margin-bottom: 90px;
+}
+
+nav{
+    width: 100%;
+    height: 90px;
+    background: #fff;
+    border-bottom: 1px solid transparent;
+    box-shadow: 1px 1px 10px 0 rgba(0, 0,0,.2);
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    
+    transition: color 0.5 ease-in;
+}
+
+.nav{
+    display: flex;
+    justify-content: space-between;
+    height: 90px;
+    width: 100%;
+    align-items: center;
+    padding: 0 40px;
+}  
+
+.nav .logo{
+    height: 80px;
+    
+}
+
+
+.nav .logo img{
+  
+    height: 100%;
+    vertical-align: top;
+    
+}
+
+.enlaces-header{
+    font-weight: 300;
+}
+
+/* ---------------- */
+.caja{
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
+.inpit_altura{
+    display: inline-block;
+    width: 50%;
+}
+.btn_traer{
+    width: 50%;
+    margin-left: 1em;
+}
+.extender{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
