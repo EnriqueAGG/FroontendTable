@@ -7,8 +7,8 @@ const macAddress = document.getElementById("macAddress");
 const SO = document.getElementById("SO");
 
 const btn_obtener = document.getElementById("btn_obtener");
-const btn_reset = document.getElementById("btn_reset");
 
+const modal = new bootstrap.Modal(document.getElementById('staticBackdrop'))
 
 const tbody = document.querySelector("#tbody");
 
@@ -17,70 +17,26 @@ const tbody = document.querySelector("#tbody");
 
 
 
-btn_reset.addEventListener('click', () => {
-    marca.value = ""
-    modelo.value = ""
-    numeroserie.value = ""
-    usuarioRed.value = ""
-    macAddress.value = ""
-    SO.value = ""
-   
+document.querySelector('#resetear').addEventListener('click', () => {
+    resetearCampos();
     btn_obtener.textContent = "Crear registro"
-    marca.focus();
-    modelo.focus();
-    numeroserie.focus();
-    usuarioRed.focus();
-    macAddress.focus();
-    SO.focus();
+    sessionStorage.clear();
 })
 
 
 
 // get products
-document.addEventListener('DOMContentLoaded', async()=>{
-    const res = await fetch('http://localhost:3000/products');
-    const data = await res.json();
- 
-   let html ="";
- 
-    data.forEach( el => {
-       html+=`
-       <tr>
-       <td>${el.ID}</td>
-       <td>${el.ID}</td>
-       <td>${el.Modelo}</td>
-       <td>${el.NumeroSerie}</td>
-       <td>${el.UsuarioRed}</td>
-       <td>${el.MACAddress}</td>
-       <td>${el.SO}</td>
-       <td><button id=${el.id}  type="button" class="btn btn-danger eliminar">Eliminar</button></td>
-       <td><button  id=${el.id} type="button" class="btn btn-warning editar">Editar</button></td>
-     </tr>`
-    });
- 
-    tbody.innerHTML = html;
- })
+document.addEventListener('DOMContentLoaded', async () => {
+    TraerDatos();
+})
 
 
- tbody.addEventListener('click', async (e) => {
+tbody.addEventListener('click', async (e) => {
+    const id = e.target.dataset.id;
 
     if (e.target.classList.contains('editar')) {
-        const id = e.target.id;
-        const url = 'http://localhost:3000/products';
-        const res = await fetch(url);
-        const data = await res.json();
-        console.log(data);
-        marca.value = data.marca;
-        modelo.value = data.modelo;
-        numeroserie.value = data.numeroserie;
-        usuarioRed.value = data.usuarioRed;
-        macAddress.value = data.macAddress;
-        SO.value = data.SO;
-        btn_obtener.textContent = "Editar registro"
-
-        sessionStorage.setItem('editar', id);
-
-        myModal.show();
+        EditarRegistro(id)
+        modal.show();
 
     }
     if (e.target.classList.contains('eliminar')) {
@@ -94,21 +50,16 @@ document.addEventListener('DOMContentLoaded', async()=>{
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar',
             cancelButtonText: 'Cancelar'
-          }).then(async(result) => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const id = e.target.id;
-                    const url = 'http://localhost:3000/products';
-        
+
+                    const url = `http://localhost:3000/products/${id}`;
                     const res = await fetch(url, {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-type': 'application/json'
-                        }
+                        method: 'DELETE'
                     })
-        
                     if (res.status === 200) {
-                        traerDatosEmpresa();
+                        TraerDatos();
                         Swal.fire({
                             position: 'center',
                             icon: 'success',
@@ -127,9 +78,7 @@ document.addEventListener('DOMContentLoaded', async()=>{
                     })
                 }
             }
-          })
-
-        
+        });
 
     }
 
@@ -137,65 +86,40 @@ document.addEventListener('DOMContentLoaded', async()=>{
 })
 
 
-btn_obtener.addEventListener('click', () => {
-    if (nombre_persona.value === "" || altura.value === "") {
-        Swal.fire({
-            title: 'Error',
-            text: 'Todos los campos son obligatorios',
-            icon: 'warning',
-            confirmButtonText: 'Cerrar'
-        })
+btn_obtener.addEventListener('click', async () => {
 
-        return;
-    }
-
+    if (validarCampos()) return;
+    
     if (btn_obtener.textContent == "Crear registro") {
-        CrearRegistro();
-        marca.value = ""
-        modelo.value = ""
-        numeroserie.value = ""
-        usuarioRed.value = ""
-        macAddress.value = ""
-        SO.value=""
         
+        CrearRegistro();
+
     } else {
         const id = sessionStorage.getItem('editar');
-        EditarRegistro(id);
-        marca.value = ""
-        modelo.value = ""
-        numeroserie.value = ""
-        usuarioRed.value = ""
-        macAddress.value = ""
-        SO.value=""
-    }
-
-})
-
-
-const EditarRegistro = async (id) => {
-    try {
-        const url = 'http://localhost:3000/products'
-        const body = {
-            ID,
-            Marca: marca.value,
-            Modelo: modelo.value,
-            NumeroSerie: numeroserie.value,
-            UsuarioRed: usuarioRed.value,
-            MACAddress: macAddress.value,
+        const url = `http://localhost:3000/products/${id}`
+        const dataSend = {
+            marca: marca.value,
+            modelo: modelo.value,
+            numeroserie: numeroserie.value,
+            usuarioRed: usuarioRed.value,
+            macAddress: macAddress.value,
             SO: SO.value
-        //  idPC: localStorage.getItem('id_pc')
         }
+
         const res = await fetch(url, {
             method: 'PUT',
             headers: {
-                'Content-type': 'application/json'
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(dataSend)
         })
         const data = await res.json();
+
         if (data) {
-            myModal.hide();
-            traerDatosEmpresa();
+            modal.hide();
+            TraerDatos();
+            btn_obtener.textContent = "Crear registro"
+            sessionStorage.clear();
             Swal.fire({
                 position: 'center',
                 icon: 'success',
@@ -205,58 +129,116 @@ const EditarRegistro = async (id) => {
                 timer: 1500
             })
         }
-    } catch (error) {
-        Swal.fire({
-            title: 'Error',
-            text: 'Error al actualizar el registro',
-            icon: 'error',
-            confirmButtonText: 'Cerrar'
-        })
     }
+
+})
+
+
+const EditarRegistro = async (id) => {
+    btn_obtener.textContent = "Editar registro"
+    sessionStorage.setItem('editar', id)
+    rellenarCamposParaEditar(id);
+
 };
 
+const rellenarCamposParaEditar = async (id) => {
+    const res = await fetch('http://localhost:3000/products/' + id);
+    const data = await res.json();
+
+    marca.value = data.Marca
+    modelo.value = data.Modelo
+    numeroserie.value = data.NumeroSerie
+    usuarioRed.value = data.UsuarioRed
+    macAddress.value = data.MACAddress
+    SO.value = data.SO
+}
 
 const CrearRegistro = async () => {
-    try {
-        const url = 'http://localhost:3000/products'
-        const body = {
-            ID,
-            Marca: marca.value,
-            Modelo: modelo.value,
-            NumeroSerie: numeroserie.value,
-            UsuarioRed: usuarioRed.value,
-            MACAddress: macAddress.value,
-            SO: SO.value
-        //  idPC: localStorage.getItem('id_pc')
-        }
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        })
-        const data = await res.json();
+    const url = `http://localhost:3000/products`
+    const dataSend = {
+        marca: marca.value,
+        modelo: modelo.value,
+        numeroserie: numeroserie.value,
+        usuarioRed: usuarioRed.value,
+        macAddress: macAddress.value,
+        SO: SO.value
+    }
 
-        if (data) {
-            myModal.hide();
-            traerDatosEmpresa();
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'Operación realizada',
-                text: "Registro agregado correctamente",
-                showConfirmButton: false,
-                timer: 1500
-            })
-        }
-    } catch (error) {
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataSend)
+    })
+    const data = await res.json();
+
+    if (data) {
+        modal.hide();
+        TraerDatos();
+        sessionStorage.clear();
         Swal.fire({
-            title: 'Error',
-            text: 'Error en al hacer el registro',
-            icon: 'error',
-            confirmButtonText: 'Cerrar'
+            position: 'center',
+            icon: 'success',
+            title: 'Operación realizada',
+            text: "Registro creado correctamente",
+            showConfirmButton: false,
+            timer: 1500
         })
     }
 };
 
+const TraerDatos = async () => {
+    const res = await fetch('http://localhost:3000/products');
+    const data = await res.json();
+
+    let html = "";
+
+    data.forEach(el => {
+        html += `
+       <tr>
+       <td>${el.ID}</td>
+       <td>${el.Marca}</td>
+       <td>${el.Modelo}</td>
+       <td>${el.NumeroSerie}</td>
+       <td>${el.UsuarioRed}</td>
+       <td>${el.MACAddress}</td>
+       <td>${el.SO}</td>
+       <td><button data-id=${el.ID}  type="button" class="btn btn-danger eliminar">Eliminar</button></td>
+       <td><button  data-id=${el.ID} type="button" class="btn btn-warning editar">Editar</button></td>
+     </tr>`
+    });
+
+    tbody.innerHTML = html;
+}
+
+const resetearCampos = () => {
+    marca.value = ""
+    modelo.value = ""
+    numeroserie.value = ""
+    usuarioRed.value = ""
+    macAddress.value = ""
+    SO.value = ""
+}
+
+const validarCampos = () => {
+    let flat = false;
+
+    if (
+        marca.value == "" ||
+        modelo.value == "" ||
+        numeroserie.value == "" ||
+        usuarioRed.value == "" ||
+        macAddress.value == "" ||
+        SO.value == ""
+    ) {
+        flat = true;
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Todos los campos son obligatorios',
+          })
+    }
+
+    return flat
+}
